@@ -42,7 +42,8 @@ function knu_setting( $key ) {
 	if ( ! is_array( $saved ) ) {
 		$saved = array();
 	}
-	$value = ( isset( $saved[ $key ] ) && '' !== $saved[ $key ] ) ? $saved[ $key ] : ( $defaults[ $key ] ?? '' );
+	// Default only when the key was never saved: an empty saved value means "cleared".
+	$value = array_key_exists( $key, $saved ) ? $saved[ $key ] : ( $defaults[ $key ] ?? '' );
 	$value = is_scalar( $value ) ? (string) $value : '';
 
 	if ( 'whatsapp' === $key ) {

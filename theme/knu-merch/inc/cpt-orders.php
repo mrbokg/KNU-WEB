@@ -77,8 +77,22 @@ function knu_register_order_cpt() {
 			'show_in_rest'    => false,
 			'menu_position'   => 26,
 			'menu_icon'       => 'dashicons-clipboard',
-			'capability_type' => 'post',
-			'capabilities'    => array( 'create_posts' => 'do_not_allow' ),
+			// Orders hold personal data: only knu_manage_orders (granted to everyone
+			// with manage_options, see knu_grant_order_cap()). Orders come only from REST.
+			'capability_type' => array( 'knu_order', 'knu_orders' ),
+			'capabilities'    => array(
+				'edit_posts'             => 'knu_manage_orders',
+				'edit_others_posts'      => 'knu_manage_orders',
+				'edit_published_posts'   => 'knu_manage_orders',
+				'edit_private_posts'     => 'knu_manage_orders',
+				'publish_posts'          => 'knu_manage_orders',
+				'read_private_posts'     => 'knu_manage_orders',
+				'delete_posts'           => 'knu_manage_orders',
+				'delete_others_posts'    => 'knu_manage_orders',
+				'delete_published_posts' => 'knu_manage_orders',
+				'delete_private_posts'   => 'knu_manage_orders',
+				'create_posts'           => 'do_not_allow',
+			),
 			'map_meta_cap'    => true,
 			'hierarchical'    => false,
 			'supports'        => false,
@@ -88,6 +102,21 @@ function knu_register_order_cpt() {
 	);
 }
 add_action( 'init', 'knu_register_order_cpt' );
+
+/**
+ * Map the custom knu_manage_orders capability to administrators
+ * (anyone with manage_options). No role changes are stored in the DB.
+ *
+ * @param array $allcaps All capabilities of the user.
+ * @return array
+ */
+function knu_grant_order_cap( $allcaps ) {
+	if ( ! empty( $allcaps['manage_options'] ) ) {
+		$allcaps['knu_manage_orders'] = true;
+	}
+	return $allcaps;
+}
+add_filter( 'user_has_cap', 'knu_grant_order_cap' );
 
 /**
  * Read one order meta value.
@@ -123,6 +152,7 @@ function knu_order_columns( $columns ) {
 		'knu_number' => 'Номер',
 		'knu_client' => 'Клиент',
 		'knu_phone'  => 'Телефон',
+		'knu_items'  => 'Состав',
 		'knu_total'   => 'Сумма',
 		'knu_payment' => 'Оплата',
 		'knu_status'  => 'Статус',
@@ -154,6 +184,16 @@ function knu_order_column_value( $column, $post_id ) {
 			$phone = (string) knu_order_meta( $post_id, 'phone' );
 			$tel   = preg_replace( '/[^\d+]/', '', $phone );
 			printf( '<a href="%1$s">%2$s</a>', esc_url( 'tel:' . $tel ), esc_html( $phone ) );
+			break;
+		case 'knu_items':
+			$items = knu_order_meta( $post_id, 'items' );
+			$lines = array();
+			foreach ( ( is_array( $items ) ? $items : array() ) as $item ) {
+				$labels  = knu_order_item_labels( $item );
+				$details = array_filter( array( $labels['color'], (string) ( $item['size'] ?? '' ) ), 'strlen' );
+				$lines[] = esc_html( $labels['title'] . ( $details ? ' (' . implode( ', ', $details ) . ')' : '' ) . ' × ' . (int) ( $item['qty'] ?? 0 ) );
+			}
+			echo implode( '<br>', $lines ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- each line escaped above.
 			break;
 		case 'knu_total':
 			echo esc_html( knu_money_lang( (int) knu_order_meta( $post_id, 'total' ), 'ru' ) );
@@ -220,7 +260,8 @@ function knu_order_admin_css() {
 		.knu-status--done{background:#d1e7dd;color:#0f5132}
 		.knu-status--cancelled{background:#f8d7da;color:#842029}
 		.knu-order-table td,.knu-order-table th{padding:6px 10px;text-align:left}
-		.knu-order-table{border-collapse:collapse;width:100%}
+		.knu-order-table{border-collapse:collapse;width:100%;table-layout:auto}
+		.knu-order-table td{overflow-wrap:anywhere;word-break:break-word}
 		.knu-order-table tr+tr td{border-top:1px solid #e5e5e2}
 		.column-knu_number{width:110px}.column-knu_status{width:150px}.column-knu_payment{width:140px}.column-knu_total{width:110px}
 	</style>
@@ -287,8 +328,9 @@ function knu_order_details_box( $post ) {
 		<tbody>
 			<?php foreach ( $items as $item ) : ?>
 				<tr>
-					<td><?php echo esc_html( (string) ( $item['title'] ?? '' ) ); ?></td>
-					<td><?php echo esc_html( (string) ( $item['color'] ?? '' ) ); ?></td>
+					<?php $labels_ru = knu_order_item_labels( $item ); ?>
+					<td><?php echo esc_html( $labels_ru['title'] ); ?></td>
+					<td><?php echo esc_html( $labels_ru['color'] ); ?></td>
 					<td><?php echo esc_html( '' !== (string) ( $item['size'] ?? '' ) ? (string) $item['size'] : '—' ); ?></td>
 					<td><?php echo esc_html( (string) (int) ( $item['qty'] ?? 0 ) ); ?></td>
 					<td><?php echo esc_html( knu_money_lang( (int) ( $item['price'] ?? 0 ), 'ru' ) ); ?></td>
@@ -303,6 +345,44 @@ function knu_order_details_box( $post ) {
 		</tfoot>
 	</table>
 	<?php
+}
+
+/**
+ * Product title and color name of an order line in Russian (admin language).
+ *
+ * Resolved from the current product data by the stable keys stored with the
+ * line (slug, color_key); old orders or removed products fall back to the
+ * text saved at checkout.
+ *
+ * @param array $item Stored order line.
+ * @return array{title:string,color:string}
+ */
+function knu_order_item_labels( $item ) {
+	static $catalog = null;
+	if ( null === $catalog ) {
+		$catalog = array();
+		foreach ( knu_query_products( 'ru' ) as $product ) {
+			$catalog[ $product['slug'] ] = $product;
+		}
+	}
+	$item  = is_array( $item ) ? $item : array();
+	$title = (string) ( $item['title'] ?? '' );
+	$color = (string) ( $item['color'] ?? '' );
+	$slug  = (string) ( $item['slug'] ?? '' );
+	if ( '' !== $slug && isset( $catalog[ $slug ] ) ) {
+		$title = $catalog[ $slug ]['title'];
+		$key   = (string) ( $item['color_key'] ?? '' );
+		foreach ( $catalog[ $slug ]['colors'] as $c ) {
+			if ( '' !== $key && $c['key'] === $key ) {
+				$color = $c['name'];
+				break;
+			}
+		}
+	}
+	return array(
+		'title' => $title,
+		'color' => $color,
+	);
 }
 
 /**
@@ -330,7 +410,7 @@ function knu_order_status_box( $post ) {
  * @param int $post_id Post ID.
  */
 function knu_order_save_status( $post_id ) {
-	if ( ! isset( $_POST['knu_order_status_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['knu_order_status_nonce'] ) ), 'knu_order_status_save' ) ) {
+	if ( ! wp_verify_nonce( sanitize_text_field( knu_post_str( 'knu_order_status_nonce' ) ), 'knu_order_status_save' ) ) {
 		return;
 	}
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -339,7 +419,7 @@ function knu_order_save_status( $post_id ) {
 	if ( wp_is_post_revision( $post_id ) || ! current_user_can( 'edit_post', $post_id ) ) {
 		return;
 	}
-	$status = isset( $_POST['knu_status'] ) ? sanitize_key( wp_unslash( $_POST['knu_status'] ) ) : '';
+	$status = sanitize_key( knu_post_str( 'knu_status' ) );
 	if ( array_key_exists( $status, knu_order_statuses() ) ) {
 		update_post_meta( $post_id, '_knu_status', $status );
 	}
@@ -375,7 +455,7 @@ function knu_count_new_orders() {
  */
 function knu_order_menu_bubble() {
 	global $menu;
-	if ( ! is_array( $menu ) || ! current_user_can( 'edit_posts' ) ) {
+	if ( ! is_array( $menu ) || ! current_user_can( 'knu_manage_orders' ) ) {
 		return;
 	}
 	$count = knu_count_new_orders();

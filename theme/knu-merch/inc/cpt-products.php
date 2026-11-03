@@ -262,12 +262,27 @@ function knu_sanitize_sizes( $sizes ) {
 }
 
 /**
+ * A POSTed field as an unslashed string; arrays and other non-strings → ''.
+ * Prevents TypeErrors (e.g. trim() on knu_colors[]=…) from crafted requests.
+ *
+ * @param string $key $_POST key.
+ * @return string
+ */
+function knu_post_str( $key ) {
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- callers verify the nonce first.
+	if ( ! isset( $_POST[ $key ] ) || ! is_string( $_POST[ $key ] ) ) {
+		return '';
+	}
+	return (string) wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by callers.
+}
+
+/**
  * Save the meta box.
  *
  * @param int $post_id Post ID.
  */
 function knu_product_save( $post_id ) {
-	if ( ! isset( $_POST['knu_product_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['knu_product_nonce'] ) ), 'knu_product_save' ) ) {
+	if ( ! wp_verify_nonce( sanitize_text_field( knu_post_str( 'knu_product_nonce' ) ), 'knu_product_save' ) ) {
 		return;
 	}
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
@@ -277,37 +292,37 @@ function knu_product_save( $post_id ) {
 		return;
 	}
 
-	$type = isset( $_POST['knu_type'] ) ? sanitize_key( wp_unslash( $_POST['knu_type'] ) ) : 'set';
+	$type = sanitize_key( knu_post_str( 'knu_type' ) );
 	update_post_meta( $post_id, '_knu_type', in_array( $type, array( 'set', 'accessory' ), true ) ? $type : 'set' );
 
 	foreach ( array( 'price', 'price_separate' ) as $key ) {
-		$value = isset( $_POST[ 'knu_' . $key ] ) ? absint( wp_unslash( $_POST[ 'knu_' . $key ] ) ) : 0;
+		$value = absint( knu_post_str( 'knu_' . $key ) );
 		update_post_meta( $post_id, '_knu_' . $key, wp_slash( $value ) );
 	}
 
 	foreach ( knu_product_text_meta() as $key ) {
-		$value = isset( $_POST[ 'knu_' . $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'knu_' . $key ] ) ) : '';
+		$value = sanitize_text_field( knu_post_str( 'knu_' . $key ) );
 		update_post_meta( $post_id, '_knu_' . $key, wp_slash( $value ) );
 	}
 
 	foreach ( array( 'desc_kg', 'composition_ru', 'composition_kg' ) as $key ) {
-		$value = isset( $_POST[ 'knu_' . $key ] ) ? sanitize_textarea_field( wp_unslash( $_POST[ 'knu_' . $key ] ) ) : '';
+		$value = sanitize_textarea_field( knu_post_str( 'knu_' . $key ) );
 		update_post_meta( $post_id, '_knu_' . $key, wp_slash( $value ) );
 	}
 
-	$sizes = isset( $_POST['knu_sizes'] ) ? sanitize_text_field( wp_unslash( $_POST['knu_sizes'] ) ) : '';
+	$sizes = sanitize_text_field( knu_post_str( 'knu_sizes' ) );
 	update_post_meta( $post_id, '_knu_sizes', wp_slash( knu_sanitize_sizes( $sizes ) ) );
 
 	// JSON fields: keep the previous value when JSON is invalid.
-	if ( isset( $_POST['knu_colors'] ) ) {
-		$raw     = trim( wp_unslash( $_POST['knu_colors'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- decoded and sanitized below.
+	if ( isset( $_POST['knu_colors'] ) && is_string( $_POST['knu_colors'] ) ) {
+		$raw     = trim( knu_post_str( 'knu_colors' ) ); // Decoded and sanitized below.
 		$decoded = ( '' === $raw ) ? array() : json_decode( $raw, true );
 		if ( is_array( $decoded ) ) {
 			update_post_meta( $post_id, '_knu_colors', wp_slash( knu_sanitize_colors( $decoded ) ) );
 		}
 	}
-	if ( isset( $_POST['knu_images'] ) ) {
-		$raw     = trim( wp_unslash( $_POST['knu_images'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- decoded and sanitized below.
+	if ( isset( $_POST['knu_images'] ) && is_string( $_POST['knu_images'] ) ) {
+		$raw     = trim( knu_post_str( 'knu_images' ) ); // Decoded and sanitized below.
 		$decoded = ( '' === $raw ) ? array() : json_decode( $raw, true );
 		if ( is_array( $decoded ) ) {
 			update_post_meta( $post_id, '_knu_images', wp_slash( knu_sanitize_images( $decoded ) ) );

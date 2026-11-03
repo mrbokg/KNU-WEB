@@ -2,8 +2,9 @@
 /**
  * Seed data for the KNU merch catalogue.
  *
- * Used once by inc/seed.php to create knu_product posts. After seeding,
- * products are edited in wp-admin and this file is no longer read.
+ * Used by inc/seed.php to create knu_product posts. After seeding, prices and
+ * texts are edited in wp-admin; a seed version bump re-syncs only the
+ * colors and images from this file.
  * Image values are file names inside assets/img/products/.
  */
 

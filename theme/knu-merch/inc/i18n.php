@@ -2,7 +2,8 @@
 /**
  * Lightweight RU/KG localisation (no plugins).
  *
- * Language source: ?lang=, then cookie knu_lang, otherwise 'ru'.
+ * Language source: ?lang=, then cookie knu_lang, otherwise 'kg' (state
+ * language, contract C8). Missing strings fall back to RU, then to the key.
  * Strings live in lang/{lang}.php as flat 'key' => 'string' arrays.
  *
  * @package knu-merch
@@ -173,12 +174,16 @@ function knu_remember_lang() {
 add_action( 'init', 'knu_remember_lang', 1 );
 
 /**
- * <html lang="ru"> / <html lang="ky">.
+ * <html lang="ru"> / <html lang="ky"> on the front end only;
+ * wp-admin keeps the user's admin locale.
  *
  * @param string $output Attributes string.
  * @return string
  */
 function knu_language_attributes( $output ) {
+	if ( is_admin() ) {
+		return $output;
+	}
 	$code = ( 'kg' === knu_lang() ) ? 'ky' : 'ru';
 	$attr = 'lang="' . esc_attr( $code ) . '"';
 	if ( preg_match( '/lang="[^"]*"/', $output ) ) {
@@ -220,7 +225,25 @@ function knu_page_content( $id ) {
 	if ( '' === $content ) {
 		$content = (string) get_post_field( 'post_content', $id, 'raw' );
 	}
-	return wp_kses_post( wpautop( $content ) );
+	return wp_kses_post( wpautop( knu_replace_seller_tokens( $content ) ) );
+}
+
+/**
+ * Replace {{seller_name}}, {{seller_inn}}, {{seller_address}}, {{seller_phone}}
+ * and {{seller_email}} with the escaped values from theme settings.
+ *
+ * @param string $content Content.
+ * @return string
+ */
+function knu_replace_seller_tokens( $content ) {
+	if ( false === strpos( (string) $content, '{{seller_' ) ) {
+		return (string) $content;
+	}
+	$map = array();
+	foreach ( array( 'seller_name', 'seller_inn', 'seller_address', 'seller_phone', 'seller_email' ) as $key ) {
+		$map[ '{{' . $key . '}}' ] = esc_html( knu_setting( $key ) );
+	}
+	return strtr( (string) $content, $map );
 }
 
 /**
@@ -234,3 +257,56 @@ function knu_legal_url( $slug ) {
 	$url  = ( $page && 'publish' === $page->post_status ) ? get_permalink( $page ) : home_url( '/' );
 	return esc_url_raw( add_query_arg( 'lang', knu_lang(), $url ) );
 }
+
+/**
+ * Document-level strings (titles, meta description) per language.
+ * Kept here because they are used in <head>, not in templates.
+ *
+ * @param string|null $lang Language; current one when null.
+ * @return array{home_title:string,site:string,description:string,locale:string}
+ */
+function knu_meta_strings( $lang = null ) {
+	$lang    = knu_sanitize_lang( null === $lang ? knu_lang() : $lang );
+	$strings = array(
+		'kg' => array(
+			'home_title'  => 'КУУ мерчи · 1925 коллекциясы — Жусуп Баласагын атындагы КУУнун 100 жылдыгына',
+			'site'        => 'КУУ мерчи · 1925',
+			'description' => 'Ж. Баласагын атындагы КУУнун 100 жылдыгына карата «1925» коллекциясы: худи, свитшот, джоггер, кепка, чыны жана брелок. Сайттан буйрутма бериңиз, КУУдан акысыз алып кетиңиз.',
+			'locale'      => 'ky_KG',
+		),
+		'ru' => array(
+			'home_title'  => 'Мерч КНУ · Коллекция 1925 — к 100-летию КНУ им. Ж. Баласагына',
+			'site'        => 'Мерч КНУ · 1925',
+			'description' => 'Коллекция «1925» к 100-летию КНУ им. Ж. Баласагына: худи, свитшоты, джоггеры, кепки, кружки и брелоки. Закажите на сайте и заберите бесплатно в КНУ.',
+			'locale'      => 'ru_RU',
+		),
+	);
+	return $strings[ $lang ? $lang : 'kg' ];
+}
+
+/**
+ * Localised <title>: front page → full collection title; pages (legal) →
+ * knu_page_title() + short brand. wp-admin is untouched.
+ *
+ * @param array $parts Title parts.
+ * @return array
+ */
+function knu_document_title_parts( $parts ) {
+	if ( is_admin() ) {
+		return $parts;
+	}
+	$meta = knu_meta_strings();
+	if ( is_front_page() ) {
+		return array( 'title' => $meta['home_title'] );
+	}
+	if ( is_page() ) {
+		$title = knu_page_title( get_queried_object_id() );
+		if ( '' !== $title ) {
+			$parts['title'] = $title;
+		}
+	}
+	$parts['site'] = $meta['site'];
+	unset( $parts['tagline'] );
+	return $parts;
+}
+add_filter( 'document_title_parts', 'knu_document_title_parts' );
