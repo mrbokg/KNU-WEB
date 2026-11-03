@@ -1,0 +1,26 @@
+{
+	"$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"meta": {
+		"title": "КНУ Мерч · Коллекция 1925",
+		"description": "Учебный проект: лендинг мерча КНУ им. Ж. Баласагына на WordPress.",
+		"author": "mrbokg"
+	},
+	"landingPage": "/",
+	"preferredVersions": { "php": "8.3", "wp": "latest" },
+	"features": { "networking": true },
+	"login": true,
+	"steps": [
+		{ "step": "setSiteOptions", "options": { "permalink_structure": "/%postname%/" } },
+		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "git:directory",
+				"url": "https://github.com/mrbokg/KNU-WEB",
+				"ref": "main",
+				"refType": "branch",
+				"path": "theme/knu-merch"
+			},
+			"options": { "activate": true, "targetFolderName": "knu-merch" }
+		}
+	]
+}
