@@ -52,6 +52,11 @@ function knu_setting( $key ) {
 	if ( 'telegram' === $key ) {
 		return knu_sanitize_telegram( $value );
 	}
+	// The demo seller name is Kyrgyz; show its Russian twin on Russian pages
+	// until the admin enters a real name.
+	if ( 'seller_name' === $key && $value === $defaults['seller_name'] && function_exists( 'knu_lang' ) && 'ru' === knu_lang() ) {
+		return 'Учебный проект — демо-продавец';
+	}
 	return $value;
 }
 
