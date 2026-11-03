@@ -41,4 +41,4 @@ MSYS_NO_PATHCONV=1 npx @wp-playground/cli@latest server --port=9400 --mount=./th
 
 - ТЗ: [`docs/superpowers/specs/2026-11-03-knu-merch-design.md`](docs/superpowers/specs/2026-11-03-knu-merch-design.md)
 - План и контракты: [`docs/superpowers/plans/2026-11-03-knu-merch.md`](docs/superpowers/plans/2026-11-03-knu-merch.md)
-- Презентация: [`presentation/knu-merch.pptx`](presentation/knu-merch.pptx)
+- Презентация: [`presentation/knu-merch.pptx`](presentation/knu-merch.pptx), PDF: [`presentation/knu-merch.pdf`](presentation/knu-merch.pdf)
