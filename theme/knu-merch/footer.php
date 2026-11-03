@@ -35,16 +35,21 @@ $knu_consent = sprintf(
 
 $knu_close_icon = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path d="M4 4l12 12M16 4L4 16" stroke-linecap="round"/></svg>';
 $knu_back_icon  = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path d="M12 4l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-$knu_fees       = array(
+$knu_fees       = function_exists( 'knu_delivery_fees' ) ? (array) knu_delivery_fees() : array(
 	'pickup'  => 0,
 	'bishkek' => 150,
 	'regions' => 300,
 );
+
+// Footer (dark background): white logo, 112 px file shown at 56 px.
+$knu_flogo = file_exists( get_theme_file_path( 'assets/img/logo-white-112.png' ) )
+	? array( 'assets/img/logo-white-112.png', 112 )
+	: array( 'assets/img/logo-white.png', 512 );
 ?>
 <footer class="site-footer" data-inert-root>
 	<div class="container site-footer__grid">
 		<div class="site-footer__brand">
-			<img class="site-footer__logo" src="<?php echo esc_url( get_theme_file_uri( 'assets/img/logo-white.png' ) ); ?>" width="56" height="56" alt="<?php echo esc_attr( knu_t( 'brand.logo_alt' ) ); ?>" loading="lazy" onerror="this.classList.add('is-missing')">
+			<img class="site-footer__logo" src="<?php echo esc_url( get_theme_file_uri( $knu_flogo[0] ) ); ?>" width="<?php echo (int) $knu_flogo[1]; ?>" height="<?php echo (int) $knu_flogo[1]; ?>" alt="<?php echo esc_attr( knu_t( 'brand.logo_alt' ) ); ?>" decoding="async" loading="lazy" onerror="this.classList.add('is-missing')">
 			<p class="site-footer__about"><?php knu_e( 'footer.about' ); ?></p>
 		</div>
 
@@ -116,7 +121,10 @@ $knu_fees       = array(
 	</button>
 </div>
 
-<div class="toast" data-toast role="status" aria-live="polite" hidden>
+<?php // Screen-reader announcements (cart changes, toasts): always present, outside inert roots. ?>
+<p class="sr-only" data-live role="status" aria-live="polite" aria-atomic="true"></p>
+
+<div class="toast" data-toast hidden>
 	<span class="toast__text" data-toast-text></span>
 	<button class="toast__btn" type="button" data-cart-open><?php knu_e( 'js.toast.open' ); ?></button>
 </div>
@@ -192,7 +200,7 @@ $knu_fees       = array(
 									<span class="choice__title"><?php knu_e( 'js.delivery.' . $knu_key ); ?></span>
 									<span class="choice__note"><?php knu_e( 'js.delivery.' . $knu_key . '_note' ); ?></span>
 								</span>
-								<span class="choice__price" data-fee="<?php echo esc_attr( $knu_key ); ?>"><?php echo esc_html( $knu_fee ? knu_money( $knu_fee ) : knu_t( 'js.cart.free' ) ); ?></span>
+								<span class="choice__price" data-fee="<?php echo esc_attr( $knu_key ); ?>"><?php echo esc_html( (int) $knu_fee > 0 ? knu_money( (int) $knu_fee ) : knu_t( 'js.cart.free' ) ); ?></span>
 							</label>
 						<?php endforeach; ?>
 						<p class="field__error" id="co-delivery-err" data-error="delivery"></p>
@@ -239,8 +247,8 @@ $knu_fees       = array(
 				</div>
 
 				<div class="hp" aria-hidden="true">
-					<label for="co-website">Website</label>
-					<input id="co-website" name="website" type="text" tabindex="-1" autocomplete="off">
+					<label for="knu_hp">Leave this field empty</label>
+					<input id="knu_hp" name="knu_hp" type="text" value="" tabindex="-1" autocomplete="off" aria-hidden="true">
 				</div>
 			</div>
 			<div class="drawer__foot">
@@ -282,6 +290,7 @@ $knu_fees       = array(
 			</div>
 			<div class="drawer__foot">
 				<button class="btn btn--primary btn--block" type="button" data-paid><?php knu_e( 'js.pay.done' ); ?></button>
+				<button class="link-btn pay__later" type="button" data-pay-later><?php knu_e( 'js.pay.later' ); ?></button>
 			</div>
 		</div>
 
@@ -298,8 +307,8 @@ $knu_fees       = array(
 				</dl>
 				<p class="success__text" data-success-text><?php knu_e( 'js.success.text' ); ?></p>
 				<div class="success__actions">
-					<a class="btn btn--primary btn--block" href="#" data-success-wa target="_blank" rel="noopener"><?php knu_e( 'js.success.whatsapp' ); ?></a>
-					<a class="btn btn--outline btn--block" href="<?php echo esc_url( 'https://t.me/' . $knu_tg ); ?>" data-success-tg target="_blank" rel="noopener"><?php knu_e( 'js.success.telegram' ); ?></a>
+					<a class="btn btn--primary btn--block" href="#" data-success-wa target="_blank" rel="noopener"<?php echo $knu_wa_digits ? '' : ' hidden'; ?>><?php knu_e( 'js.success.whatsapp' ); ?></a>
+					<a class="btn btn--outline btn--block" href="<?php echo esc_url( 'https://t.me/' . $knu_tg ); ?>" data-success-tg target="_blank" rel="noopener"<?php echo $knu_tg ? '' : ' hidden'; ?>><?php knu_e( 'js.success.telegram' ); ?></a>
 					<button class="link-btn" type="button" data-drawer-close><?php knu_e( 'js.success.done' ); ?></button>
 				</div>
 			</div>

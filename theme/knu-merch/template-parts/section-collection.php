@@ -37,7 +37,7 @@ $knu_sets = knu_get_products( 'set' );
 				<div class="product__media gallery" data-gallery>
 					<div class="gallery__main media" data-fallback="1925">
 						<?php $knu_main_src = $knu_images[0] ?? ''; ?>
-						<img data-gallery-main src="<?php echo esc_url( $knu_main_src ); ?>" width="1200" height="1500" alt="<?php echo esc_attr( $knu_p['title'] . ', ' . $knu_first['name'] ); ?>" loading="<?php echo 0 === $knu_i ? 'eager' : 'lazy'; ?>" decoding="async" onerror="this.classList.add('is-missing')"<?php echo $knu_main_src ? '' : ' class="is-missing"'; ?>>
+						<img data-gallery-main src="<?php echo esc_url( $knu_main_src ); ?>" width="1000" height="1500" alt="<?php echo esc_attr( $knu_p['title'] . ', ' . $knu_first['name'] ); ?>" loading="<?php echo 0 === $knu_i ? 'eager' : 'lazy'; ?>" decoding="async" onerror="this.classList.add('is-missing')"<?php echo $knu_main_src ? '' : ' class="is-missing"'; ?>>
 						<?php if ( ! empty( $knu_p['badge'] ) ) : ?>
 							<span class="badge badge--corner"><?php echo esc_html( $knu_p['badge'] ); ?></span>
 						<?php endif; ?>
@@ -46,7 +46,7 @@ $knu_sets = knu_get_products( 'set' );
 						<?php for ( $knu_n = 0; $knu_n < $knu_thumbs; $knu_n++ ) : ?>
 							<?php $knu_src = $knu_images[ $knu_n ] ?? ''; ?>
 							<button class="gallery__thumb media" type="button" data-thumb="<?php echo (int) $knu_n; ?>" aria-pressed="<?php echo 0 === $knu_n ? 'true' : 'false'; ?>" aria-label="<?php echo esc_attr( sprintf( knu_t( 'product.photo' ), $knu_n + 1 ) ); ?>">
-								<img src="<?php echo esc_url( $knu_src ); ?>" width="1200" height="1500" alt="" loading="lazy" decoding="async" onerror="this.classList.add('is-missing')"<?php echo $knu_src ? '' : ' class="is-missing"'; ?>>
+								<img src="<?php echo esc_url( $knu_src ); ?>" width="1000" height="1500" alt="" loading="lazy" decoding="async" onerror="this.classList.add('is-missing')"<?php echo $knu_src ? '' : ' class="is-missing"'; ?>>
 							</button>
 						<?php endfor; ?>
 					</div>

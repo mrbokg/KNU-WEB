@@ -944,7 +944,7 @@ img.is-loading {
 }
 
 .price__was {
-	color: var(--faint);
+	color: #6b6b66; /* 5.3:1 on white (WCAG AA for normal text) */
 	font-size: 16px;
 }
 
@@ -2318,12 +2318,21 @@ body.knu {
 	outline-offset: 2px;
 }
 
+/* Honeypot: out of view, out of the tab order and the accessibility tree. */
 .hp {
 	position: absolute !important;
-	left: -9999px;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
+	left: -10000px !important;
+	top: auto !important;
+	width: 1px !important;
+	height: 1px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	overflow: hidden !important;
+	clip: rect(0 0 0 0) !important;
+	clip-path: inset(50%) !important;
+	white-space: nowrap !important;
+	opacity: 0 !important;
+	pointer-events: none !important;
 }
 
 .form-alert {
@@ -3096,6 +3105,83 @@ html:has(body.has-drawer) {
 	.site-nav__list {
 		gap: 0;
 		padding: 0;
+	}
+}
+
+/* ---------- Toast variants, pay later, 404 ---------- */
+
+.toast[hidden] {
+	display: none;
+}
+
+.toast__btn[hidden] {
+	display: none;
+}
+
+.toast--error {
+	background: #3a1714;
+	box-shadow: inset 3px 0 0 #f97066;
+}
+
+/* Toasts raised over the open drawer (e.g. "order text copied"). */
+body.has-drawer .toast {
+	z-index: 100001;
+}
+
+.pay__later {
+	justify-self: center;
+	min-height: 44px;
+}
+
+.page-404 {
+	display: flex;
+	align-items: center;
+	min-height: min(70vh, 640px);
+	padding-block: 72px var(--section-y);
+}
+
+.page-404__inner {
+	max-width: 560px;
+}
+
+.page-404__code {
+	margin-bottom: 16px;
+	color: var(--blue);
+	font-family: var(--font-head);
+	font-weight: 700;
+	font-size: 14px;
+	letter-spacing: 0.12em;
+}
+
+.page-404__title {
+	margin-bottom: 16px;
+	font-family: var(--font-head);
+	font-weight: 700;
+	font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+	line-height: 1.1;
+	letter-spacing: -0.025em;
+}
+
+.page-404__text {
+	margin-bottom: 32px;
+	color: var(--muted);
+	font-size: 17px;
+	line-height: 1.6;
+}
+
+.page-404__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+@media (max-width: 479px) {
+	.page-404 {
+		padding-top: 48px;
+	}
+
+	.page-404__actions .btn {
+		flex: 1 1 100%;
 	}
 }
 

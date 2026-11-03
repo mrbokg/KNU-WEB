@@ -29,7 +29,7 @@ if ( ! $knu_items ) {
 				?>
 				<li class="acc" id="product-<?php echo esc_attr( $knu_slug ); ?>" data-product="<?php echo esc_attr( $knu_slug ); ?>">
 					<div class="acc__media media" data-fallback="1925">
-						<img data-gallery-main src="<?php echo esc_url( $knu_src ); ?>" width="1200" height="1500" alt="<?php echo esc_attr( trim( $knu_p['title'] . ', ' . $knu_first['name'], ', ' ) ); ?>" loading="lazy" decoding="async" onerror="this.classList.add('is-missing')"<?php echo $knu_src ? '' : ' class="is-missing"'; ?>>
+						<img data-gallery-main src="<?php echo esc_url( $knu_src ); ?>" width="1000" height="1500" alt="<?php echo esc_attr( trim( $knu_p['title'] . ', ' . $knu_first['name'], ', ' ) ); ?>" loading="lazy" decoding="async" onerror="this.classList.add('is-missing')"<?php echo $knu_src ? '' : ' class="is-missing"'; ?>>
 						<?php if ( ! empty( $knu_p['badge'] ) ) : ?>
 							<span class="badge badge--corner"><?php echo esc_html( $knu_p['badge'] ); ?></span>
 						<?php endif; ?>

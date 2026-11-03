@@ -35,7 +35,11 @@
 		return !it.size;
 	}
 
-	function sanitize(list) {
+	// Number of stored lines dropped by the last read() because the product,
+	// color or size no longer exists in the catalog.
+	var dropped = 0;
+
+	function sanitize(list, stats) {
 		var out = [];
 		var index = {};
 		(Array.isArray(list) ? list : []).forEach(function (raw) {
@@ -46,7 +50,11 @@
 				size: String(raw.size || ''),
 				qty: clampQty(raw.qty)
 			};
-			if (!it.qty || !isValid(it)) return;
+			if (!it.qty) return;
+			if (!isValid(it)) {
+				if (stats) stats.invalid++;
+				return;
+			}
 			var k = keyOf(it);
 			if (index[k] !== undefined) {
 				out[index[k]].qty = Math.min(out[index[k]].qty + it.qty, MAX_QTY);
@@ -59,15 +67,20 @@
 	}
 
 	function read() {
+		var stats = { invalid: 0 };
+		var out = [];
 		try {
 			var raw = window.localStorage.getItem(KEY);
-			return sanitize(raw ? JSON.parse(raw) : []);
+			out = sanitize(raw ? JSON.parse(raw) : [], stats);
 		} catch (e) {
-			return [];
+			out = [];
 		}
+		dropped = stats.invalid;
+		return out;
 	}
 
 	var items = read();
+	var droppedOnLoad = dropped;
 
 	function persist() {
 		try {
@@ -126,19 +139,24 @@
 		count: count,
 		subtotal: subtotal,
 		price: priceOf,
+		// Returns true when something was added. On false, api.lastError says why:
+		// 'invalid' (unknown product/option), 'qty' (already MAX_QTY), 'lines' (MAX_LINES reached).
 		add: function (it) {
+			api.lastError = '';
 			var next = sanitize([{ slug: it.slug, color: it.color, size: it.size, qty: it.qty || 1 }])[0];
-			if (!next) return false;
+			if (!next) { api.lastError = 'invalid'; return false; }
 			var i = find(keyOf(next));
 			if (i !== -1) {
+				if (items[i].qty >= MAX_QTY) { api.lastError = 'qty'; return false; }
 				items[i].qty = Math.min(items[i].qty + next.qty, MAX_QTY);
 			} else {
-				if (items.length >= MAX_LINES) return false;
+				if (items.length >= MAX_LINES) { api.lastError = 'lines'; return false; }
 				items.push(next);
 			}
 			commit('add', next);
 			return true;
 		},
+		lastError: '',
 		setQty: function (key, qty) {
 			var i = find(key);
 			if (i === -1) return;
@@ -160,8 +178,14 @@
 			items = [];
 			commit('clear');
 		},
-		maxQty: MAX_QTY
+		maxQty: MAX_QTY,
+		maxLines: MAX_LINES,
+		// Lines removed on page load because they are no longer sold (e.g. a retired color).
+		dropped: droppedOnLoad
 	};
+
+	// Store the cleaned cart so the notice about removed lines is shown only once.
+	if (droppedOnLoad) persist();
 
 	window.addEventListener('storage', function (e) {
 		if (e.key !== KEY) return;

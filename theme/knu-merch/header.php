@@ -51,8 +51,14 @@ $knu_nav         = array(
 <header class="site-header" data-header data-inert-root>
 	<div class="container site-header__bar">
 		<a class="brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( knu_t( 'brand.home' ) ); ?>">
+			<?php
+			// 96 px file shown at 36-40 px (sharp on 2x screens); fall back to the 512 px original.
+			$knu_logo = file_exists( get_theme_file_path( 'assets/img/logo-96.png' ) )
+				? array( 'assets/img/logo-96.png', 96 )
+				: array( 'assets/img/logo.png', 512 );
+			?>
 			<span class="brand__mark">
-				<img class="brand__logo" src="<?php echo esc_url( get_theme_file_uri( 'assets/img/logo.png' ) ); ?>" width="40" height="40" alt="" onerror="this.classList.add('is-missing')">
+				<img class="brand__logo" src="<?php echo esc_url( get_theme_file_uri( $knu_logo[0] ) ); ?>" width="<?php echo (int) $knu_logo[1]; ?>" height="<?php echo (int) $knu_logo[1]; ?>" alt="" decoding="async" onerror="this.classList.add('is-missing')">
 			</span>
 			<span class="brand__text">
 				<span class="brand__name"><?php knu_e( 'brand.name' ); ?></span>
@@ -73,7 +79,7 @@ $knu_nav         = array(
 				<a class="lang-switch__link" href="<?php echo esc_url( knu_lang_url( 'kg' ) ); ?>" hreflang="ky" lang="ky"<?php echo 'kg' === $knu_cur_lang ? ' aria-current="true"' : ''; ?>>KG</a>
 				<a class="lang-switch__link" href="<?php echo esc_url( knu_lang_url( 'ru' ) ); ?>" hreflang="ru" lang="ru"<?php echo 'ru' === $knu_cur_lang ? ' aria-current="true"' : ''; ?>>RU</a>
 			</div>
-			<button class="cart-btn" type="button" data-cart-open aria-controls="cart-drawer" aria-haspopup="dialog" aria-label="<?php echo esc_attr( knu_t( 'header.cart' ) ); ?>" data-label="<?php echo esc_attr( knu_t( 'header.cart' ) ); ?>">
+			<button class="cart-btn" type="button" data-cart-open aria-controls="cart-drawer" aria-haspopup="dialog" aria-expanded="false" aria-label="<?php echo esc_attr( knu_t( 'header.cart' ) ); ?>" data-label="<?php echo esc_attr( knu_t( 'header.cart' ) ); ?>">
 				<svg class="cart-btn__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path d="M5 8h14l-1 12H6L5 8Z" stroke-linejoin="round"/><path d="M9 10V7a3 3 0 0 1 6 0v3" stroke-linecap="round"/></svg>
 				<span class="cart-btn__count" data-cart-count hidden>0</span>
 			</button>

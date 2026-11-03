@@ -5,7 +5,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$knu_options = array(
+$knu_options = function_exists( 'knu_delivery_fees' ) ? (array) knu_delivery_fees() : array(
 	'pickup'  => 0,
 	'bishkek' => 150,
 	'regions' => 300,
@@ -26,7 +26,7 @@ $knu_options = array(
 							<p class="price-list__text"><?php knu_e( 'delivery.' . $knu_key . '.text' ); ?></p>
 						</div>
 						<p class="price-list__price" data-fee="<?php echo esc_attr( $knu_key ); ?>">
-							<?php echo esc_html( $knu_fee ? knu_money( $knu_fee ) : knu_t( 'delivery.free' ) ); ?>
+							<?php echo esc_html( (int) $knu_fee > 0 ? knu_money( (int) $knu_fee ) : knu_t( 'delivery.free' ) ); ?>
 						</p>
 					</li>
 				<?php endforeach; ?>
