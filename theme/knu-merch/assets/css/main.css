@@ -877,7 +877,7 @@ img.is-loading {
 }
 
 .gallery__main {
-	aspect-ratio: 4 / 5;
+	aspect-ratio: 2 / 3;
 }
 
 .gallery__thumbs {
@@ -887,7 +887,7 @@ img.is-loading {
 
 .gallery__thumb {
 	width: 64px;
-	aspect-ratio: 4 / 5;
+	aspect-ratio: 2 / 3;
 	padding: 0;
 	border: 1px solid transparent;
 	border-radius: 0;
@@ -1211,7 +1211,7 @@ details[open] > .faq__q::after {
 }
 
 .acc__media {
-	aspect-ratio: 4 / 5;
+	aspect-ratio: 2 / 3;
 }
 
 .acc__media::before {
@@ -2080,7 +2080,7 @@ body.knu {
 
 .cart-item__img {
 	width: 76px;
-	aspect-ratio: 4 / 5;
+	aspect-ratio: 2 / 3;
 }
 
 .cart-item__img::before {

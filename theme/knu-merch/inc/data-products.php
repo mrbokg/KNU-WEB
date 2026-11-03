@@ -22,11 +22,6 @@ $knu_garment_colors = array(
 		'hex'  => '#1B2A44',
 		'name' => array( 'ru' => 'Тёмно-синий', 'kg' => 'Кочкул көк' ),
 	),
-	array(
-		'key'  => 'black',
-		'hex'  => '#141414',
-		'name' => array( 'ru' => 'Чёрный', 'kg' => 'Кара' ),
-	),
 );
 
 $knu_set_composition = array(
@@ -53,7 +48,6 @@ return array(
 		'images'         => array(
 			'grey'  => array( 'set-hoodie-grey-1.webp', 'set-hoodie-grey-2.webp' ),
 			'navy'  => array( 'set-hoodie-navy-1.webp', 'set-hoodie-navy-2.webp' ),
-			'black' => array( 'set-hoodie-black-1.webp', 'set-hoodie-black-2.webp' ),
 		),
 	),
 	array(
@@ -74,7 +68,6 @@ return array(
 		'images'         => array(
 			'grey'  => array( 'set-sweatshirt-grey-1.webp', 'set-sweatshirt-grey-2.webp' ),
 			'navy'  => array( 'set-sweatshirt-navy-1.webp', 'set-sweatshirt-navy-2.webp' ),
-			'black' => array( 'set-sweatshirt-black-1.webp', 'set-sweatshirt-black-2.webp' ),
 		),
 	),
 	array(
@@ -91,10 +84,10 @@ return array(
 		),
 		'composition'    => array( 'ru' => '100% хлопок, one size.', 'kg' => '100% пахта, бир өлчөм.' ),
 		'sizes'          => array(),
-		'colors'         => array( $knu_garment_colors[1], $knu_garment_colors[2] ),
+		'colors'         => array( $knu_garment_colors[1], $knu_garment_colors[0] ),
 		'images'         => array(
 			'navy'  => array( 'cap-navy-1.webp' ),
-			'black' => array( 'cap-black-1.webp' ),
+			'grey'  => array( 'cap-grey-1.webp' ),
 		),
 	),
 	array(
@@ -106,8 +99,8 @@ return array(
 		'badge'          => array( 'ru' => '', 'kg' => '' ),
 		'title'          => array( 'ru' => 'Кружка', 'kg' => 'Чыны' ),
 		'desc'           => array(
-			'ru' => 'Керамическая кружка 330 мл с логотипом КНУ.',
-			'kg' => 'КУУнун логотиби бар 330 мл керамикалык чыны.',
+			'ru' => 'Керамическая кружка 330 мл с гербом КНУ — белая или тёмно-синяя.',
+			'kg' => 'КУУнун гербу бар 330 мл керамикалык чыны — ак же кочкул көк.',
 		),
 		'composition'    => array( 'ru' => 'Керамика, 330 мл.', 'kg' => 'Керамика, 330 мл.' ),
 		'sizes'          => array(),
@@ -117,9 +110,15 @@ return array(
 				'hex'  => '#FFFFFF',
 				'name' => array( 'ru' => 'Белый', 'kg' => 'Ак' ),
 			),
+			array(
+				'key'  => 'navy',
+				'hex'  => '#1B2A44',
+				'name' => array( 'ru' => 'Тёмно-синий', 'kg' => 'Кочкул көк' ),
+			),
 		),
 		'images'         => array(
 			'white' => array( 'mug-white-1.webp' ),
+			'navy'  => array( 'mug-navy-1.webp' ),
 		),
 	),
 	array(
