@@ -1,0 +1,15 @@
+/*
+Theme Name: KNU Merch 1925
+Theme URI: https://github.com/mrbokg/KNU-WEB
+Author: KNU-WEB
+Description: Одностраничный лендинг мерча КНУ «Коллекция 1925»: товары, корзина, заказы через REST, языки RU/KG. Учебный проект.
+Version: 1.0.0
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: knu-merch
+*/
+
+/* Styles live in assets/css/main.css (enqueued in inc/assets.php). */
