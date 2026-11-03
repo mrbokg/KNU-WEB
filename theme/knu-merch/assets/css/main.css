@@ -2733,6 +2733,372 @@ body.knu {
 	font-weight: 600;
 }
 
+/* ---------- Mobile polish (phones & small tablets) ---------- */
+
+/* viewport-fit=cover: keep content clear of the notch in landscape. */
+@supports (padding: max(0px)) {
+	.container {
+		padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+		padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+	}
+
+	.mbar {
+		padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
+		padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+	}
+
+	.drawer__body,
+	.drawer__foot,
+	.stepper {
+		padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+	}
+
+	.drawer__head {
+		padding-right: max(12px, env(safe-area-inset-right, 0px));
+	}
+}
+
+/* Long Kyrgyz/Russian words never push the layout sideways. */
+h1,
+h2,
+h3,
+.prose {
+	overflow-wrap: break-word;
+}
+
+/* Scroll lock that also holds on iOS Safari (overflow on <html>). */
+html:has(body.has-drawer) {
+	overflow: hidden;
+}
+
+/* Prevent iOS from auto-zooming any form control. */
+@media (max-width: 767px) {
+	input,
+	select,
+	textarea {
+		font-size: 16px;
+	}
+}
+
+@media (max-width: 599px) {
+	/* Header: the four anchors fit on one row, evenly spread. */
+	.site-nav__list {
+		justify-content: space-between;
+		gap: 0;
+		padding: 0 calc(var(--gutter) - 8px);
+	}
+
+	.site-nav__link {
+		min-height: 42px;
+		padding: 0 8px;
+		font-size: 13.5px;
+	}
+
+	.lang-switch__link {
+		min-width: 40px;
+		min-height: 36px;
+	}
+
+	.announce__text {
+		padding-block: 8px;
+		font-size: 12.5px;
+	}
+
+	/* Hero: the second line ("С 1925 года." / "1925-жылдан бери.") stays on one line. */
+	.hero {
+		padding-block: 16px 48px;
+	}
+
+	.hero__title {
+		font-size: clamp(1.75rem, 9.2vw, 2.75rem);
+		line-height: 1.04;
+	}
+
+	.hero__lead {
+		font-size: 16px;
+	}
+
+	.hero__actions {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.hero__actions .btn {
+		width: 100%;
+	}
+
+	.section-lead {
+		font-size: 16px;
+	}
+
+	/* Legal pages: «Политика конфиденциальности» must fit a 360px screen. */
+	.page-doc {
+		padding-top: 28px;
+	}
+
+	.page-doc__back {
+		margin-bottom: 20px;
+		padding-block: 10px;
+	}
+
+	.page-doc__title {
+		margin-bottom: 24px;
+		padding-bottom: 20px;
+		font-size: clamp(1.5rem, 7.4vw, 2.25rem);
+	}
+
+	.prose {
+		font-size: 16px;
+	}
+
+	.prose h2 {
+		font-size: 20px;
+	}
+
+	/* Size chart: all five columns fit the screen, no sideways scrolling. */
+	.size-table {
+		min-width: 0;
+		font-size: 14px;
+	}
+
+	.size-table th,
+	.size-table td {
+		padding: 12px 6px;
+	}
+
+	.size-table th:first-child,
+	.size-table td:first-child {
+		padding-left: 0;
+	}
+
+	.size-table th:last-child,
+	.size-table td:last-child {
+		padding-right: 0;
+	}
+
+	.size-table thead th {
+		font-size: 12px;
+		line-height: 1.35;
+		hyphens: auto;
+	}
+}
+
+@media (max-width: 959px) {
+	/* Less dead space between the last set and the next section. */
+	.product:last-child {
+		padding-bottom: 0;
+	}
+
+	.product__title {
+		text-wrap: balance;
+	}
+}
+
+@media (max-width: 767px) {
+	/* Bigger tap targets */
+	.option__link {
+		top: -11px;
+		padding-block: 11px;
+	}
+
+	.swatch--sm {
+		width: 44px;
+		height: 44px;
+	}
+
+	.swatch--sm .swatch__dot {
+		width: 30px;
+		height: 30px;
+	}
+
+	.option--compact .swatches {
+		gap: 6px;
+		margin-left: -3px;
+	}
+
+	.size {
+		min-height: 48px;
+	}
+
+	.site-footer__list:not(.site-footer__list--plain) {
+		gap: 2px;
+	}
+
+	.site-footer__list:not(.site-footer__list--plain) a {
+		display: inline-block;
+		padding-block: 6px;
+	}
+
+	.site-footer__bottom {
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	/* Steps: number beside the title — tighter, calmer rhythm. */
+	.steps__list {
+		gap: 0;
+	}
+
+	.step {
+		grid-template-columns: 36px minmax(0, 1fr);
+		column-gap: 16px;
+		row-gap: 6px;
+		padding-block: 20px 24px;
+	}
+
+	.step__num {
+		grid-row: span 2;
+		margin-bottom: 0;
+	}
+
+	.step__title {
+		font-size: 20px;
+		line-height: 1.8; /* centres the first line on the 36px circle */
+	}
+
+	.step__text {
+		max-width: none;
+	}
+
+	/* Cart drawer */
+	.qty__btn {
+		width: 40px;
+		height: 40px;
+	}
+
+	.cart-item__row {
+		flex-wrap: wrap;
+		gap: 8px 14px;
+	}
+
+	.check {
+		padding-block: 4px;
+	}
+
+	.success__actions .link-btn {
+		min-height: 44px;
+		padding-inline: 12px;
+	}
+
+	.drawer__title {
+		font-size: 18px;
+	}
+}
+
+/* Tablet portrait: product photo beside the options instead of a 1000px-tall image. */
+@media (min-width: 768px) and (max-width: 959px) {
+	.media--hero {
+		aspect-ratio: 3 / 2;
+	}
+
+	.product {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		gap: 32px;
+		align-items: start;
+		padding-block: 56px;
+	}
+
+	.product--flip .product__media {
+		order: 2;
+	}
+
+	.product__body {
+		position: sticky;
+		top: calc(var(--header-h) + 24px);
+	}
+}
+
+/* Short phones: keep the QR and the drawer footer within one screen. */
+.pay__qr {
+	width: min(240px, 64vw, 34svh);
+}
+
+@media (max-height: 720px) and (max-width: 767px) {
+	.drawer__head {
+		min-height: 56px;
+	}
+
+	.stepper {
+		padding-block: 10px;
+	}
+
+	.drawer__foot {
+		gap: 10px;
+		padding-top: 12px;
+	}
+
+	.totals {
+		gap: 4px;
+	}
+
+	.totals__row--total {
+		font-size: 17px;
+	}
+
+	/* Checkout: fees are already on the delivery cards — show only the total. */
+	.checkout .totals__row:not(.totals__row--total) {
+		display: none;
+	}
+
+	.checkout .totals__row--total {
+		margin-top: 0;
+		padding-top: 0;
+		border-top: 0;
+	}
+
+	.pay__body {
+		gap: 14px;
+		padding-top: 14px;
+	}
+
+	.success__body {
+		padding-top: 24px;
+	}
+}
+
+/* Landscape phones: the hero image must not eat the whole screen. */
+@media (orientation: landscape) and (max-height: 500px) {
+	.media--hero {
+		aspect-ratio: 16 / 7;
+	}
+
+	.mbar {
+		padding-block: 6px calc(6px + env(safe-area-inset-bottom, 0px));
+	}
+
+	.mbar__btn {
+		min-height: 44px;
+	}
+}
+
+/* Wide landscape phones: one-row header so it doesn't take a quarter of the screen. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 700px) {
+	:root {
+		--header-h: 56px;
+	}
+
+	.site-header__bar {
+		grid-template-columns: auto 1fr auto;
+		grid-template-areas: "brand nav tools";
+		column-gap: 20px;
+	}
+
+	.brand {
+		min-height: 56px;
+	}
+
+	.site-nav {
+		margin: 0;
+		border: 0;
+		justify-self: center;
+	}
+
+	.site-nav__list {
+		gap: 0;
+		padding: 0;
+	}
+}
+
 /* ---------- Reduced motion ---------- */
 
 @media (prefers-reduced-motion: reduce) {

@@ -172,13 +172,13 @@ $knu_fees       = array(
 
 					<div class="field">
 						<label class="field__label" for="co-name"><?php knu_e( 'js.form.name' ); ?></label>
-						<input class="field__input" id="co-name" name="name" type="text" autocomplete="name" maxlength="60" required aria-describedby="co-name-err">
+						<input class="field__input" id="co-name" name="name" type="text" autocomplete="name" autocapitalize="words" enterkeyhint="next" maxlength="60" required aria-describedby="co-name-err">
 						<p class="field__error" id="co-name-err" data-error="name"></p>
 					</div>
 
 					<div class="field">
 						<label class="field__label" for="co-phone"><?php knu_e( 'js.form.phone' ); ?></label>
-						<input class="field__input" id="co-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+996 700 123 456" required aria-describedby="co-phone-err" data-phone>
+						<input class="field__input" id="co-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="next" placeholder="+996 700 123 456" required aria-describedby="co-phone-err" data-phone>
 						<p class="field__error" id="co-phone-err" data-error="phone"></p>
 					</div>
 
