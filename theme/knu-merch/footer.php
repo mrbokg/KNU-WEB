@@ -104,6 +104,9 @@ $knu_fees       = array(
 		<p><?php knu_e( 'footer.rights' ); ?></p>
 		<p><?php knu_e( 'footer.prices' ); ?></p>
 		<p class="site-footer__study"><?php knu_e( 'footer.study' ); ?></p>
+		<?php if ( is_user_logged_in() ) : ?>
+			<p><a href="<?php echo esc_url( admin_url( 'edit.php?post_type=knu_order' ) ); ?>"><?php knu_e( 'footer.admin' ); ?></a></p>
+		<?php endif; ?>
 	</div>
 </footer>
 

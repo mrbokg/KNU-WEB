@@ -129,6 +129,7 @@ return array(
 	'footer.inn' => 'ИНН',
 	'footer.docs' => 'Документы',
 	'footer.prices' => 'Все цены указаны в сомах (KGS)',
+	'footer.admin' => 'Админка (заказы)',
 	'page.back' => 'На главную',
 
 	// Drawer (rendered by PHP, used by JS too).

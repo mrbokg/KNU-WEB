@@ -44,3 +44,9 @@ function knu_disable_emoji() {
 	add_filter( 'emoji_svg_url', '__return_false' );
 }
 add_action( 'init', 'knu_disable_emoji' );
+
+/**
+ * Keep the storefront clean: no admin bar on the front end.
+ * Logged-in users reach wp-admin through the footer link.
+ */
+add_filter( 'show_admin_bar', '__return_false' );

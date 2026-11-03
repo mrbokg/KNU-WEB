@@ -129,6 +129,7 @@ return array(
 	'footer.inn' => 'ИСН',
 	'footer.docs' => 'Документтер',
 	'footer.prices' => 'Бардык баалар сом менен көрсөтүлгөн (KGS)',
+	'footer.admin' => 'Башкаруу панели (буйрутмалар)',
 	'page.back' => 'Башкы бетке',
 
 	// Drawer (rendered by PHP, used by JS too).

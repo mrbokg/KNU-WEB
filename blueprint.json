@@ -10,6 +10,7 @@
 	"features": { "networking": true },
 	"login": true,
 	"steps": [
+		{ "step": "setSiteLanguage", "language": "ru_RU" },
 		{ "step": "setSiteOptions", "options": { "permalink_structure": "/%postname%/" } },
 		{
 			"step": "installTheme",
