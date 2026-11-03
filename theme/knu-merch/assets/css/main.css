@@ -762,9 +762,8 @@ img.is-loading {
 	.hero__line,
 	.hero__lead,
 	.hero__actions,
-	.hero__note,
-	.hero__media {
-		animation: knu-rise 0.9s var(--ease) both;
+	.hero__note {
+		animation: knu-rise 0.5s var(--ease) both;
 	}
 
 	.hero__line:nth-child(2) {
@@ -782,23 +781,12 @@ img.is-loading {
 	.hero__note {
 		animation-delay: 0.34s;
 	}
-
-	.hero__media {
-		animation-name: knu-fade;
-		animation-duration: 1.2s;
-	}
 }
 
 @keyframes knu-rise {
 	from {
 		opacity: 0;
 		transform: translateY(14px);
-	}
-}
-
-@keyframes knu-fade {
-	from {
-		opacity: 0;
 	}
 }
 
